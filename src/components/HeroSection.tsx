@@ -1,15 +1,27 @@
 import heroImage from "@/assets/hero-evoluir.jpg";
+import heroImage2 from "@/assets/1745525473564.jpeg";
 import TestimonialCard from "./TestimonialCard";
 import profilePlaceholder from "@/assets/profile-placeholder.jpg";
 import { useTestimonials } from "@/hooks/useTestimonials";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const HeroSection = () => {
   const { testimonials, isLoading, fetchTestimonials } = useTestimonials();
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const backgroundImages = [heroImage, heroImage2];
 
   useEffect(() => {
     fetchTestimonials();
   }, []);
+
+  // Alternar imagem de fundo a cada 5 segundos
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % backgroundImages.length);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [backgroundImages.length]);
 
   // Pegar apenas os depoimentos destacados para o hero
   const featuredTestimonials = testimonials.filter(testimonial => testimonial.is_featured);
@@ -25,9 +37,9 @@ const HeroSection = () => {
   return (
     <section className="relative h-[110vh] flex items-center justify-center overflow-hidden -mt-16">
       <div 
-        className="absolute inset-0 bg-cover bg-no-repeat"
+        className="absolute inset-0 bg-cover bg-no-repeat transition-all duration-1000 ease-in-out"
         style={{ 
-          backgroundImage: `url(${heroImage})`,
+          backgroundImage: `url(${backgroundImages[currentImageIndex]})`,
           backgroundPosition: 'center 25%'
         }}
       >
